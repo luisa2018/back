@@ -1,6 +1,7 @@
 package com.miproyecto.demo.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class UserController {
 	@RequestMapping(value = "/saveOrUpdate", method = RequestMethod.POST)
 	public RestResponse saveOrUpdate(@RequestBody String userJson)
 			throws JsonParseException, JsonMappingException, IOException {
-        this.mapper = new ObjectMapper();
+		this.mapper = new ObjectMapper();
 		User user = this.mapper.readValue(userJson, User.class);
 
 		if (!this.validate(user)) {
@@ -38,6 +39,11 @@ public class UserController {
 		this.userService.save(user);
 		return new RestResponse(HttpStatus.OK.value(), "Operacion exitosa");
 
+	}
+	
+	@RequestMapping(value = "/getUser", method = RequestMethod.GET)
+	public List<User> getUser() {
+		return this.userService.findAll();
 	}
 
 	private boolean validate(User user) {
