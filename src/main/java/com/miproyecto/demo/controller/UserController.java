@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miproyecto.demo.model.ParentEntiy;
 import com.miproyecto.demo.model.User;
 import com.miproyecto.demo.service.UserService;
 import com.miproyecto.demo.util.RestResponse;
 
 @RestController
-public class UserController {
+public class UserController extends ParentEntiy {
 
 	@Autowired
 	protected UserService userService;
@@ -40,10 +41,21 @@ public class UserController {
 		return new RestResponse(HttpStatus.OK.value(), "Operacion exitosa");
 
 	}
-	
+
 	@RequestMapping(value = "/getUser", method = RequestMethod.GET)
 	public List<User> getUser() {
 		return this.userService.findAll();
+	}
+
+	@RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
+	public void deleteUser(@RequestBody String userJson) throws Exception {
+		this.mapper = new ObjectMapper();
+		User user = this.mapper.readValue(userJson, User.class);
+
+		if (user.getId() == null) {
+			throw new Exception("El id esta nulo");
+		}
+		this.userService.deleteUser(user.getId());
 	}
 
 	private boolean validate(User user) {
